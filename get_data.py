@@ -25,16 +25,21 @@ def scraper(html_doc):
     parser = HTMLParser.HTMLParser()
     html_doc = parser.unescape(html_doc)
     lines = re.findall('<span id="FormView2_HTML_CodeLabel">(.+?.)</span>',html_doc)
-    things = re.split("<br \> ",lines[0])
-
-    for thing in things:
-        subfields = thing.split('<b>')[1:]
-        for s in subfields:
-            subfield = s.split('</b>')
-            name = subfield[0][0:-3]
-            things = subfield[1].rstrip('<br \>').split(',')
-            things = map(unicode.strip, things)
-            classes[name] = things
+    if lines:
+        things = re.split("<br \> ",lines[0])
+        for thing in things:
+            subfields = thing.split('<b>')[1:]
+            for s in subfields:
+                subfield = s.split('</b>')
+                name = subfield[0][0:-3]
+                things = subfield[1].rstrip('<br \>').split(',')
+                things = map(unicode.strip, things)
+                classes[name] = things
+    else:
+        classes = {'Category': '',
+                   'Services': '',
+                   'Program': '',
+                   'Population': ''}
 
     # for field in item.find(id = 'FormView2_Special_Lng_ServiceLabel'):
     language = item.find(id='FormView2_Special_Lng_ServiceLabel').get_text()[26:].split(', ')
@@ -55,4 +60,8 @@ def org_from_filename(filename):
 
 def reader_all():
     filenames = glob.glob('html/*')
-    return map(org_from_filename, filenames)
+    result = []
+    for index, filename in enumerate(filenames):
+        print index, filename
+        result.append(org_from_filename(filename))
+    return result
