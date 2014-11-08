@@ -4,8 +4,6 @@ import HTMLParser
 import codecs
 import glob
 
-html_doc = codecs.open('thingstoget.html', 'r', 'utf-8')
-html_doc = html_doc.read()
 
 def scraper(html_doc):
     # geolocator = Nominatim(country_bias="USA")
@@ -48,5 +46,13 @@ def scraper(html_doc):
     final[agency] = dict(entry.items() + classes.items())
     return final
 
-def reader()
-agency = scraper(html_doc)
+
+def org_from_filename(filename):
+    with codecs.open(filename, 'r', 'utf-8') as f:
+        html_doc = f.read()
+    return scraper(html_doc)
+
+
+def reader_all():
+    filenames = glob.glob('html/*')
+    return map(org_from_filename, filenames)
